@@ -1,13 +1,11 @@
 import numpy as np
 import keras
 import imageio as iio
-import cv2
 
 model = keras.models.load_model('./models/singlepic.h5')
 print 'Model is loaded'
 
 img = iio.imread('./hdr/anyhere/dani_belgium.hdr', 'HDR-FI')
-img = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)
 rows, cols, depth = img.shape
 
 #l_map = np.zeros((rows,cols))
@@ -34,11 +32,25 @@ predictions = model.predict(descriptors, batch_size=256, verbose=1)
 
 predictions = np.reshape(predictions, (rows,cols))
 
+#convert to YIQ
+for ii in range(rows):
+    for jj in range(cols):
+        y,i,q = cs.rgb_to_yiq(img.item(ii,jj,0), img.item(ii,jj,1), img.item(ii,jj,2))
+        img.itemset((ii,jj,0), y)
+        img.itemset((ii,jj,1), i)
+        img.itemset((ii,jj,2), q)
+
 img[:,:,0] = predictions
 
-img = cv2.cvtColor(img, cv2.COLOR_Lab2BGR)
-img = img*255
-cv2.imwrite('./predicted/dani_belgium.png', img)
+#convert back to RGB and save img
+for ii in range(rows):
+    for jj in range(cols):
+        r,g,b = cs.yiq_to_rgb(img.item(ii,jj,0), img.item(ii,jj,1), img.item(ii,jj,2))
+        img.itemset((ii,jj,0), r)
+        img.itemset((ii,jj,1), g)
+        img.itemset((ii,jj,2), b)
+
+iio.imwrite('./predicted/dani_belgium.png', img)
 
 
 

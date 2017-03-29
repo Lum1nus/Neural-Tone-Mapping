@@ -1,17 +1,16 @@
 import numpy as np
 import keras
 import imageio as iio
-import cv2
+import colorsys as cs
 
 np.random.seed(702)# =^_^=
 
 #initial work with images
 input_img = iio.imread('./hdr/anyhere/dani_belgium.hdr', 'HDR-FI')
-true_img = cv2.imread('./drago03/anyhere/dani_belgium.png')
-true_img = cv2.cvtColor(true_img, cv2.COLOR_RGB2Lab)
+true_img = iio.imread('./drago03/anyhere/dani_belgium.png')
 rows, cols, depth = input_img.shape
 
-#build luminance(lightness/brightness/yarkost?) map
+#build luminance(lightness/brightness/yarkost?) map for hdr one
 l_map = np.zeros((rows,cols))
 for i in range(rows):
 	for j in range(cols):
@@ -38,7 +37,8 @@ GT = np.array([])
 for i in range(rows):
 	for j in range(cols//4, cols):
 		if (i+j)%10==0:
-			GT = np.append(GT, true_img.item(i,j,0))
+			y, ii, qq = cs.rgb_to_yiq(true_img.item(i,j,0), true_img.item(i,j,1), true_img.item(i,j,2)) #its actually the same with hdr
+			GT = np.append(GT, y)
 
 #work with the model
 model = keras.models.Sequential()
