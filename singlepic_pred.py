@@ -37,9 +37,7 @@ predictions = model.predict(descriptors, batch_size=512, verbose=1)
 
 predictions = np.reshape(predictions, (rows,cols))
 
-#~ print predictions[90:100, 60:70]
-
-alpha = 0.8		
+alpha = 1.1		
 for i in range(rows):
 	for j in range(cols):
 		r = img.item(i,j,0)
