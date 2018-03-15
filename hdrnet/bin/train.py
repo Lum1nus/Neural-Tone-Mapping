@@ -75,7 +75,7 @@ def main(args, model_params, data_params):
         batch_size=args.batch_size, nthreads=args.data_threads,
         fliplr=args.fliplr, flipud=args.flipud, rotate=args.rotate,
         random_crop=args.random_crop, params=data_params,
-        output_resolution=args.output_resolution)
+        output_resolution=args.output_resolution, datatype='train')
     train_samples = train_data_pipeline.samples
     
   if args.eval_data_dir is not None:
@@ -86,8 +86,8 @@ def main(args, model_params, data_params):
           batch_size=1, nthreads=1,
           fliplr=False, flipud=False, rotate=False,
           random_crop=False, params=data_params,
-          output_resolution=args.output_resolution)
-      eval_samples = train_data_pipeline.samples
+          output_resolution=args.output_resolution, datatype='eval')
+      eval_samples = eval_data_pipeline.samples
   # ---------------------------------------------------------------------------
   
   # Training graph

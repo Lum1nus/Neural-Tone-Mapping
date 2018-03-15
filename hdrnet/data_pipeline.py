@@ -87,7 +87,8 @@ class DataPipeline(object):
                random_crop=False,
                params=None,
                nthreads=1, 
-               num_epochs=None):
+               num_epochs=None,
+               datatype=None):
     self.path = path
     self.batch_size = batch_size
     self.capacity = capacity
@@ -96,6 +97,7 @@ class DataPipeline(object):
     self.nthreads = nthreads
     self.num_epochs = num_epochs
     self.params = params
+    self.datatype = datatype
 
     self.output_resolution = output_resolution
     # Data augmentation
@@ -378,7 +380,7 @@ class NewHDRDataPipeline(DataPipeline):
 		input_files = [os.path.join(dirname, 'input', f+'.hdr') for f in flist]
 		output_files = [os.path.join(dirname, 'output', f+'.png') for f in flist]
 		
-		self._writer = RecordWriter(dirname)
+		self._writer = RecordWriter(dirname, self.datatype)
 		
 		for f1,f2 in zip(input_files, output_files):
 			wr_data = {}
@@ -413,10 +415,10 @@ class NewHDRDataPipeline(DataPipeline):
 		# normalize input/output
 		with tf.name_scope('normalize_images'):
 		  im_input = sample['image_input']
-		  im_input = tf.to_float(im_input)#/input_wl
+		  im_input = tf.to_float(im_input)
 
 		  im_output = sample['image_output']
-		  im_output = tf.to_float(im_output)#/output_wl
+		  im_output = tf.to_float(im_output)/output_wl
 
 		inout = tf.concat([im_input, im_output], 2)
 		fullres, inout = self._augment_data(inout, 6)
@@ -554,12 +556,13 @@ class RecordWriter(object):
     output_dir: directory where the .tfrecords are saved.
   """
 
-  def __init__(self, output_dir, records_per_file=500, prefix=''):
+  def __init__(self, output_dir, datatype, records_per_file=2000, prefix=''):
     self.output_dir = output_dir
     self.records_per_file = records_per_file
     self.written = 0
     self.nfiles = 0
     self.prefix = prefix
+    self.datatype = datatype
 
     # internal state
     self._writer = None
@@ -567,7 +570,7 @@ class RecordWriter(object):
 
   def _get_new_filename(self):
     self.nfiles += 1
-    return os.path.join(self.output_dir, '{}{:06d}.tfrecords'.format(self.prefix, self.nfiles))
+    return os.path.join(self.output_dir, '{}_{:06d}.tfrecords'.format(self.datatype, self.nfiles))
 
   def write(self, data):
     """Write the arrays in data to the currently opened tfrecords.

@@ -97,7 +97,7 @@ def main(args):
   with tf.variable_scope('inference'):
     prediction = mdl.inference(
         t_lowres_input, t_fullres_input, model_params, is_training=False)
-  output = tf.cast(tf.squeeze(tf.clip_by_value(prediction, 0, 255)), tf.uint8)
+  output = tf.cast(255.0*tf.squeeze(tf.clip_by_value(prediction, 0, 1)), tf.uint8)
   #~ output = tf.squeeze(prediction)
   saver = tf.train.Saver()
 
@@ -162,12 +162,12 @@ def main(args):
       log.info("Max level: {}".format(np.amax(im_input[:, :, 2])))
       
       # Resizing to scale of 512
-      height, width, depth = im_input.shape
-      if width < height:
-        mult = 512.0/width
-      else:
-        mult = 512.0/height
-      im_input = cv2.resize(im_input, None, fx=mult, fy=mult)
+      #~ height, width, depth = im_input.shape
+      #~ if width < height:
+        #~ mult = 512.0/width
+      #~ else:
+        #~ mult = 512.0/height
+      #~ im_input = cv2.resize(im_input, None, fx=mult, fy=mult)
       
       # Normalization for HDR
       #~ bri_map = 0.2126*im_input[:,:,0] + 0.7152*im_input[:,:,1] + 0.0722*im_input[:,:,2]

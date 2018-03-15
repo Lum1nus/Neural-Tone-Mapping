@@ -25,7 +25,7 @@ b_initializer = tf.constant_initializer
 def conv(inputs, num_outputs, kernel_size, stride=1, rate=1,
     use_bias=True,
     batch_norm=False, is_training=False,
-    activation_fn=tf.nn.relu, 
+    activation_fn=tf.nn.elu, 
     scope=None, reuse=False):
   if batch_norm:
     normalizer_fn = tf.contrib.layers.batch_norm
@@ -63,7 +63,7 @@ def conv(inputs, num_outputs, kernel_size, stride=1, rate=1,
 def fc(inputs, num_outputs,
     use_bias=True,
     batch_norm=False, is_training=False,
-    activation_fn=tf.nn.relu, 
+    activation_fn=tf.nn.elu, 
     scope=None):
   if batch_norm:
     normalizer_fn = tf.contrib.layers.batch_norm

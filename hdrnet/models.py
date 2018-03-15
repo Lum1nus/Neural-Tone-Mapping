@@ -120,9 +120,12 @@ class HDRNetCurves(object):
 
     # -----------------------------------------------------------------------
     with tf.name_scope('fusion'):
+      #~ fus_shp = splat_features.get_shape().as_list()
+      #~ fus_shp[3] = 8*cm*gd
+      #~ fusion_grid = tf.constant(np.zeros(fus_shp), dtype=tf.float32)	
       fusion_grid = grid_features
       fusion_global = tf.reshape(global_features, [bs, 1, 1, 8*cm*gd])
-      fusion = tf.nn.relu(fusion_grid+fusion_global)
+      fusion = tf.nn.elu(fusion_grid+fusion_global)
     # -----------------------------------------------------------------------
 
     # -----------------------------------------------------------------------
@@ -184,7 +187,7 @@ class HDRNetCurves(object):
         outputs_collections=[tf.GraphKeys.ACTIVATIONS],
         scope='channel_mixing')
 
-    #guidemap = tf.clip_by_value(guidemap, 0, 255)
+    guidemap = tf.clip_by_value(guidemap, 0, 1)
     guidemap = tf.squeeze(guidemap, squeeze_dims=[3,])
 
     return guidemap
