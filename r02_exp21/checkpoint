@@ -1,0 +1,6 @@
+model_checkpoint_path: "on_stop.ckpt"
+all_model_checkpoint_paths: "model.ckpt-224835"
+all_model_checkpoint_paths: "model.ckpt-225368"
+all_model_checkpoint_paths: "model.ckpt-225901"
+all_model_checkpoint_paths: "model.ckpt-226434"
+all_model_checkpoint_paths: "on_stop.ckpt"
